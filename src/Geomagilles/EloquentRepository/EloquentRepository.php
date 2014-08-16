@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the EloquentRepository package.
+ * This file is part of the Eloquent-Repository package.
  *
  * (c) Gilles Barbier <geomagilles@gmail.com>
  *

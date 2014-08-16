@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the EloquentRepository package.
+ * This file is part of the Eloquent-Repository package.
  *
  * (c) Gilles Barbier <geomagilles@gmail.com>
  *
@@ -20,7 +20,7 @@ interface EloquentRepositoryInterface
      * @return string
      */
     public function getTable();
-    
+
     /**
      * Make a new instance of the entity to query on
      *
