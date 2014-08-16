@@ -22,7 +22,7 @@ interface EloquentRepositoryInterface
     public function getTable();
 
     /**
-     * Make a new instance of the entity to query on
+     * Make a new instance of query for this entity
      *
      * @param array $with
      */

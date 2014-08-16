@@ -11,6 +11,7 @@
 namespace Geomagilles\EloquentRepository;
  
 use IteratorAggregate;
+use Str;
 
 abstract class EloquentRepository implements EloquentRepositoryInterface
 {
@@ -149,18 +150,21 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
         if (preg_match('#^get[A-Z]+#', $method)) {
             // getter method
             if (count($arguments)>0) {
-                throw new \Exception("getter method ($method) can NOT have any parameter");
+                $className = get_class($this);
+                throw new \Exception("getter {$className}::{$method}) can NOT have any parameter");
             }
             return $this->get($method);
         } elseif (preg_match('#^set[A-Z]+#', $method)) {
             // setter method
             if (count($arguments)>1) {
-                throw new \Exception("setter method ($method) can NOT have more than 1 parameter");
+                $className = get_class($this);
+                throw new \Exception("setter {$className}::{$method} can NOT have more than 1 parameter");
             }
             $key = lcfirst(substr($method, 3));
             return $this->set($method, count($arguments)==0 ? null : $arguments[0]);
         } else {
-            throw new \Exception("unknown method: $method");
+            $className = get_class($this);
+            throw new \BadMethodCallException("Call to undefined method {$className}::{$method}");
         }
     }
 
@@ -210,7 +214,7 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
 
     public function create(array $data = array())
     {
-        return self::wrap($this->make()->create($this->match($data)));
+        return self::wrap($this->model->create($this->match($data)));
     }
 
     public function getAll(array $with = array())
@@ -220,12 +224,12 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
 
     public function getById($id, array $with = array())
     {
-        return self::wrap($this->make($with)->find($id));
+        return $this->getFirstBy('id', $id, $with);
     }
 
     public function deleteById($id)
     {
-        $this->make()->destroy($id);
+        return $this->deleteFirstBy('id', $id);
     }
 
     public function getFirstBy($key, $value, array $with = array())
@@ -235,6 +239,13 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
         return self::wrap($this->make($with)->where($key, '=', $value)->first());
     }
 
+    public function deleteFirstBy($key, $value)
+    {
+        $key = $this->match($key);
+    
+        $this->make()->where($key, '=', $value)->take(1)->delete();
+    }
+    
     public function getManyBy($key, $value, array $with = array())
     {
         $key = $this->match($key);
@@ -242,18 +253,11 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
         return self::wrap($this->make($with)->where($key, '=', $value)->get());
     }
 
-    public function deleteFirstBy($key, $value)
-    {
-        $key = $this->match($key);
-    
-        return self::wrap($this->make()->where($key, '=', $value)->take(1)->delete());
-    }
-
     public function deleteManyBy($key, $value)
     {
         $key = $this->match($key);
     
-        return self::wrap($this->make()->where($key, '=', $value)->delete());
+        $this->make()->where($key, '=', $value)->delete();
     }
 
     public function getByPage($page = 1, $limit = 10, array $with = array())
