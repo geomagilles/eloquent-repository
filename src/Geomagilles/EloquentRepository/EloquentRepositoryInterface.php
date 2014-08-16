@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the EloquentRepository framework.
+ * This file is part of the EloquentRepository package.
  *
  * (c) Gilles Barbier <geomagilles@gmail.com>
  *
@@ -16,17 +16,17 @@ namespace Geomagilles\EloquentRepository;
 interface EloquentRepositoryInterface
 {
     /**
-     * Gets subjascent eloquent model
-     * @param array $with
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function getModel(array $with = array());
-
-    /**
      * Gets table name 
      * @return string
      */
     public function getTable();
+    
+    /**
+     * Make a new instance of the entity to query on
+     *
+     * @param array $with
+     */
+    public function make(array $with = array());
 
     //
     // INSTANCE METHOD
