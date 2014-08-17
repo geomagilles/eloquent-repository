@@ -50,6 +50,11 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
         return $this->model->getTable();
     }
 
+    public function getModel()
+    {
+        return $this->model;
+    }
+
     public function make(array $with = array())
     {
         return $this->model->with($with);
