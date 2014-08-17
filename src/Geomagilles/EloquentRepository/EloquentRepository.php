@@ -11,7 +11,7 @@
 namespace Geomagilles\EloquentRepository;
  
 use IteratorAggregate;
-use Str;
+use Illuminate\Support\Str;
 
 abstract class EloquentRepository implements EloquentRepositoryInterface
 {
