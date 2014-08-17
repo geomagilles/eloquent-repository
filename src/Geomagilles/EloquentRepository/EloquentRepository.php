@@ -117,25 +117,37 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
     /**
      * Return model's attribute
      * @param $method (eg. 'getId')
+     * @throws \BadMethodCallException if unknown key
      * @return mixed
      */
     protected function get($method)
     {
-        $key = lcfirst(substr($method, 3));
-        return $this->model->__get($this->match($key));
+        $key = $this->match(lcfirst(substr($method, 3)));
+        if (in_array($key, array_keys($this->model->attributesToArray()))) {
+            return $this->model->__get($key);
+        } else {
+            $className = get_class($this);
+            throw new \BadMethodCallException("Call to undefined method {$className}::{$method}");
+        }
+
     }
 
     /**
      * Set model's attribute
      * @param $method (eg 'setId')
      * @param $d
-     * @throws \Exception if unknown key
+     * @throws \BadMethodCallException if unknown key
      * @return mixed
      */
     protected function set($method, $d)
     {
-        $key = lcfirst(substr($method, 3));
-        return $this->model->__set($this->match($key), $d);
+        $key = $this->match(lcfirst(substr($method, 3)));
+        if (in_array($key, array_keys($this->model->attributesToArray()))) {
+            return $this->model->__set($key, $d);
+        } else {
+            $className = get_class($this);
+            throw new \BadMethodCallException("Call to undefined method {$className}::{$method}");
+        }
     }
 
     /**
