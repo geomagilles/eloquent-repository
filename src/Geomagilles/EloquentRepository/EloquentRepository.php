@@ -60,6 +60,11 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
         return $this->model->with($with);
     }
 
+    public function toArray()
+    {
+        return $this->reverseMatch($this->model->toArray());
+    }
+
     /**
      * Matches application keys with database keys and jsonify arrays attribute
      * @param string $key (eg. 'projectId')
@@ -78,6 +83,28 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
                 return static::$matching[$data];
             } else {
                 return Str::snake($data, '_');
+            }
+        }
+    }
+
+    /**
+     * Matches database keys with application keys
+     * @param string $key (eg. 'project_id')
+     * @return string (eg. 'projectId')
+     */
+    protected function reverseMatch($data)
+    {
+        if (is_array($data) || ($data instanceof Traversable)) {
+            $result = array();
+            foreach ($data as $key => $value) {
+                $result[$this->reverseMatch($key)] = $value;
+            }
+            return $result;
+        } else {
+            if ($key = array_search($data, static::$matching)) {
+                return $key;
+            } else {
+                return Str::camel($data);
             }
         }
     }
