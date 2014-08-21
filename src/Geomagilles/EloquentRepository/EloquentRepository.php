@@ -142,13 +142,14 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
      * @param $method (eg 'setId')
      * @param $d
      * @throws \BadMethodCallException if unknown key
-     * @return mixed
+     * @return self
      */
     protected function set($method, $d)
     {
         $key = $this->match(lcfirst(substr($method, 3)));
         if (in_array($key, array_keys($this->model->attributesToArray()))) {
-            return $this->model->__set($key, $d);
+            $this->model->__set($key, $d);
+            return $this;
         } else {
             $className = get_class($this);
             throw new \BadMethodCallException("Call to undefined method {$className}::{$method}");
