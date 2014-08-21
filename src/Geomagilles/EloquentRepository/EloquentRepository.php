@@ -61,7 +61,7 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
     }
 
     /**
-     * Matches application keys with database keys
+     * Matches application keys with database keys and jsonify arrays attribute
      * @param string $key (eg. 'projectId')
      * @return string (eg. 'project_id')
      */
@@ -70,7 +70,7 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
         if (is_array($data) || ($data instanceof Traversable)) {
             $new = array();
             foreach ($data as $key => $value) {
-                $new[$this->match($key)] = $value;
+                $new[$this->match($key)] = is_array($value) ? json_encode($value) : $value;
             }
             return $new;
         } else {
@@ -232,11 +232,7 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
 
     public function create(array $data = array())
     {
-        $d = array();
-        foreach ($data as $key => $value) {
-            $d[$this->match($key)] = is_array($value) ? json_encode($value) : $value;
-        }
-        return self::wrap($this->model->create($d));
+        return self::wrap($this->model->create($this->match($data)));
     }
 
     public function getAll(array $with = array())
