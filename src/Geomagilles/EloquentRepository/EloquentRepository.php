@@ -232,7 +232,11 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
 
     public function create(array $data = array())
     {
-        return self::wrap($this->model->create($this->match($data)));
+        $d = array();
+        foreach ($data as $key => $value) {
+            $d[$this->match($key)] = is_array($value) ? json_encode($value) : $value;
+        }
+        return self::wrap($this->model->create($d));
     }
 
     public function getAll(array $with = array())
