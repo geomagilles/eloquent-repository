@@ -129,16 +129,18 @@ abstract class EloquentRepository implements EloquentRepositoryInterface
     public function save()
     {
         $this->model->save();
+        return $this;
     }
 
     public function delete()
     {
-        return $this->model->delete();
+        $this->model->delete();
     }
 
     public function update($data = array())
     {
         $this->model->update($this->match($data));
+        return $this;
     }
 
     public function getId()
